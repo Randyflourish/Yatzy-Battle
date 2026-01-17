@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yatzy Battle - Map Demo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Outfit:wght@500;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <header>
+            <h1>Yatzy Battle</h1>
+            <div id="stats-bar">
+                <span>Floor: 1</span>
+                <span>Gold: 100</span>
+                <span>HP: 50/50</span>
+            </div>
+        </header>
+
+        <main id="map-view">
+            <div id="map-scroll-container">
+                <div id="map-content">
+                    <svg id="map-connections"></svg>
+                    <div id="map-rooms"></div>
+                </div>
+            </div>
+            <button id="scroll-to-player" class="fab-btn" title="Go back to current room">📍</button>
+        </main>
+
+        <!-- Modal Overlay -->
+        <div id="modal-overlay" class="hidden">
+            <div id="modal-content">
+                <button id="modal-cancel" class="close-btn">&times;</button>
+                <div id="modal-room-info">
+                    <div id="modal-room-icon"></div>
+                    <h2 id="modal-room-type"></h2>
+                </div>
+                <div id="modal-actions">
+                    <button id="modal-move" class="primary-btn">MOVE</button>
+                    <button id="modal-cancel-btn" class="secondary-btn">CANCEL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Transition Overlay -->
+        <div id="room-playing-overlay" class="hidden">
+            <div class="transition-content">
+                <div id="playing-room-icon"></div>
+                <h1 id="playing-room-type"> Entering Room...</h1>
+            </div>
+        </div>
+
+        <footer>
+            <button id="regenerate-map">Regenerate Map</button>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
