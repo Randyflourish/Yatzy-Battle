@@ -9,6 +9,7 @@ class MapManager {
         this.mapData = [];
         this.currentStageIdx = 0;
         this.currentRoomId = null;
+        this.currentFloor = 1;
 
         this.roomAssets = {
             'Start': '', // Represented by nothing as per SPEC
@@ -17,6 +18,7 @@ class MapManager {
             'Treasure': 'assets/treasure_icon.png',
             'Shop': 'assets/shop_icon.png',
             'Rest': 'assets/rest_icon.png',
+            'Partner': 'assets/partner_icon.png',
             'Event': 'assets/event_icon.png',
             'Boss': 'assets/boss_monster_icon.png'
         };
@@ -106,7 +108,7 @@ class MapManager {
     getRandomRoomType(stageIndex) {
         if (stageIndex === 0) return 'Start';
         if (stageIndex === this.stagesCount - 1) return 'Boss';
-        const types = ['Battle[Normal]', 'Battle[Normal]', 'Battle[Elite]', 'Treasure', 'Shop', 'Rest', 'Event'];
+        const types = ['Battle[Normal]', 'Battle[Normal]', 'Battle[Elite]', 'Treasure', 'Shop', 'Rest', 'Event', 'Partner'];
         return types[Math.floor(Math.random() * types.length)];
     }
 
@@ -225,9 +227,22 @@ class MapManager {
             this.transitionOverlay.classList.add('hidden');
             this.currentRoomId = room.id;
             this.currentStageIdx = room.stage;
-            this.updateMapView();
-            this.scrollToCurrent();
+
+            // Floor Progression: If boss is cleared, go to next floor
+            if (room.type === 'Boss') {
+                this.nextFloor()
+            }
+            else {
+                this.updateMapView();
+                this.scrollToCurrent();
+            }
         }, 1000);
+    }
+
+    nextFloor() {
+        this.currentFloor++;
+        document.getElementById('floor-count').textContent = `Floor: ${this.currentFloor}`;
+        this.init(); // Restart map generation for new floor
     }
 
     scrollToCurrent() {

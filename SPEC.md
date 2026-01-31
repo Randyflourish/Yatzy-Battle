@@ -25,6 +25,7 @@ Yatzy Battle is a roguelike, turn-based game where player use five dice to battl
 - **Shop**: The shop room. Player go this room will have a chance to use golds to buy some items. Use a shop icon to represent.
 - **Rest**: The rest room. Player go this room will have a chance to rest and recover some HP. Use a cross icon to represent.
 - **Event**: The event room. Player go this room will trigger a random event, and the event might have some effect on player. Use an exclamation mark icon to represent.
+- **Partner**: The partner room. Player go this room will have a chance to get a partner. Use a partner icon to represent.
 - **Boss**: The final battle room for each floor. Player go this room will have a battle against 1 ~ 3 boss enemy. The reward, compareing with **Battle[Elite]**, will become much better. Use a boss monster icon to represent.
 - All icons are in the `assets` folder.
 
