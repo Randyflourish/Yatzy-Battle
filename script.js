@@ -228,11 +228,14 @@ class MapManager {
             this.currentRoomId = room.id;
             this.currentStageIdx = room.stage;
 
-            // Floor Progression: If boss is cleared, go to next floor
-            if (room.type === 'Boss') {
-                this.nextFloor()
-            }
-            else {
+            // Battle Check
+            if (['Battle[Normal]', 'Battle[Elite]', 'Boss'].includes(room.type)) {
+                game.startBattle(room);
+            } else if (room.type === 'Start') {
+                this.updateMapView();
+                this.scrollToCurrent();
+            } else {
+                // For now, other rooms just refresh the map
                 this.updateMapView();
                 this.scrollToCurrent();
             }
@@ -303,6 +306,162 @@ class MapManager {
     }
 }
 
+class BattleManager {
+    constructor() {
+        this.view = document.getElementById('battle-view');
+        this.enemyArea = document.getElementById('enemy-area');
+        this.unrolledList = document.getElementById('unrolled-dice-list');
+        this.lockedList = document.getElementById('locked-dice-list');
+        this.rollBtn = document.getElementById('roll-button');
+        this.attackBtn = document.getElementById('attack-button');
+
+        this.playerHP = 100;
+        this.enemies = [];
+        this.dice = []; // Array of { value: 1-6, status: 'unrolled' | 'locked' }
+        this.rollsLeft = 3;
+
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        this.rollBtn.onclick = () => this.rollDice();
+        this.attackBtn.onclick = () => this.attack();
+    }
+
+    startBattle(room) {
+        document.getElementById('map-view').classList.add('hidden');
+        this.view.classList.remove('hidden');
+
+        // Init Enemies
+        const count = room.type === 'Boss' ? 1 : Math.floor(Math.random() * 3) + 1;
+        this.enemies = [];
+        for (let i = 0; i < count; i++) {
+            this.enemies.push({
+                hp: 100,
+                maxHp: 100,
+                cd: room.type === 'Boss' ? 5 : Math.floor(Math.random() * 3) + 2,
+                maxCd: room.type === 'Boss' ? 5 : Math.floor(Math.random() * 3) + 2,
+                icon: room.type === 'Boss' ? '🐲' : '👾'
+            });
+        }
+
+        // Init Dice
+        this.dice = Array.from({ length: 5 }, () => ({ value: '?', status: 'unrolled' }));
+        this.rollsLeft = 3;
+
+        this.renderBattle();
+    }
+
+    renderBattle() {
+        // Render Enemies
+        this.enemyArea.innerHTML = '';
+        this.enemies.forEach(enemy => {
+            const el = document.createElement('div');
+            el.className = 'enemy-unit';
+            el.innerHTML = `
+                ${enemy.icon}
+                <div class="enemy-cd">CD ${enemy.cd}</div>
+                <div class="hp-bar-container">
+                    <div class="hp-bar" style="width: ${enemy.hp}%"></div>
+                </div>
+            `;
+            this.enemyArea.appendChild(el);
+        });
+
+        // Render Dice
+        this.renderDice();
+
+        // Update Buttons
+        this.rollBtn.textContent = `ROLL (${this.rollsLeft})`;
+
+        const allLocked = this.dice.every(d => d.status === 'locked');
+        this.attackBtn.classList.toggle('disabled', !allLocked);
+        this.rollBtn.disabled = this.rollsLeft <= 0 || allLocked;
+    }
+
+    renderDice() {
+        this.unrolledList.innerHTML = '';
+        this.lockedList.innerHTML = '';
+
+        this.dice.forEach((die, idx) => {
+            const dieEl = document.createElement('div');
+            dieEl.className = 'dice';
+            dieEl.textContent = die.value;
+            dieEl.onclick = () => this.toggleDice(idx);
+
+            if (die.status === 'unrolled') {
+                this.unrolledList.appendChild(dieEl);
+            } else {
+                this.lockedList.appendChild(dieEl);
+            }
+        });
+    }
+
+    rollDice() {
+        if (this.rollsLeft <= 0) return;
+        const allLocked = this.dice.every(d => d.status === 'locked');
+        if (allLocked) return;
+        this.rollsLeft--;
+
+        this.dice.forEach(die => {
+            if (die.status === 'unrolled') {
+                die.value = Math.floor(Math.random() * 6) + 1;
+            }
+        });
+
+        // Sort dice by value ascending
+        this.dice.sort((a, b) => a.value - b.value);
+
+        if (this.rollsLeft === 0) {
+            this.dice.forEach(die => die.status = 'locked');
+        }
+
+        this.renderBattle();
+    }
+
+    toggleDice(idx) {
+        if (this.rollsLeft === 0 && this.dice[idx].status === 'locked') return; // Cannot unlock if no rolls left
+        if (this.rollsLeft === 3 && this.dice[idx].status === 'unrolled') return; // Cannot lock if not rolled yet
+        this.dice[idx].status = this.dice[idx].status === 'unrolled' ? 'locked' : 'unrolled';
+        this.renderBattle();
+    }
+
+    attack() {
+        const allLocked = this.dice.every(d => d.status === 'locked');
+        if (!allLocked) return;
+
+        // Logic: Enemies CD - 1
+        this.enemies.forEach(enemy => {
+            enemy.cd--;
+            if (enemy.cd <= 0) enemy.cd = enemy.maxCd;
+        });
+
+        // Stay in battle phase: Reset turn state after a short delay
+        setTimeout(() => {
+            this.rollsLeft = 3;
+            this.dice.forEach(d => {
+                d.status = 'unrolled';
+                d.value = '?';
+            });
+            this.renderBattle();
+        }, 800);
+
+        this.renderBattle();
+    }
+}
+
+class Game {
+    constructor() {
+        this.mapManager = new MapManager();
+        this.battleManager = new BattleManager();
+    }
+
+    startBattle(room) {
+        this.battleManager.startBattle(room);
+    }
+}
+
+let game;
 document.addEventListener('DOMContentLoaded', () => {
-    new MapManager();
+    game = new Game();
 });

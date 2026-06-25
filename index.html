@@ -23,6 +23,9 @@
             </div>
         </header>
 
+        <!-- Phaser Canvas Container -->
+        <div id="phaser-game"></div>
+
         <main id="map-view">
             <div id="map-scroll-container">
                 <div id="map-content">
@@ -33,7 +36,33 @@
             <button id="scroll-to-player" class="fab-btn" title="Go back to current room">📍</button>
         </main>
 
-        <!-- Modal Overlay -->
+        <section id="battle-view" class="hidden">
+            <div id="enemy-area" class="zone-red">
+            </div>
+
+            <div id="hero-area">
+                <div id="player-container" class="zone-black">
+                    <div class="character-head">👤</div>
+                    <div class="hp-bar-container">
+                        <div id="player-hp" class="hp-bar" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div id="partner-area" class="zone-purple">
+                </div>
+            </div>
+
+            <div id="dice-section">
+                <div id="unrolled-area" class="zone-orange">
+                    <div id="unrolled-dice-list"></div>
+                    <button id="roll-button" class="action-btn">ROLL (3)</button>
+                </div>
+                <div id="locked-area" class="zone-blue">
+                    <div id="locked-dice-list"></div>
+                    <button id="attack-button" class="action-btn">ATTACK</button>
+                </div>
+            </div>
+        </section>
+
         <div id="modal-overlay" class="hidden">
             <div id="modal-content">
                 <button id="modal-cancel" class="close-btn">&times;</button>
@@ -48,7 +77,6 @@
             </div>
         </div>
 
-        <!-- Room Transition Overlay -->
         <div id="room-playing-overlay" class="hidden">
             <div class="transition-content">
                 <div id="playing-room-icon"></div>
@@ -60,7 +88,7 @@
             <button id="regenerate-map">Regenerate Map</button>
         </footer>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>
