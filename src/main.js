@@ -5,11 +5,15 @@ import { BattleScene } from './scenes/BattleScene.js';
 
 const config = {
   type: Phaser.AUTO,
-  width: 600,
-  height: 800,
+  width: 820,
+  height: 900,
   parent: 'phaser-game',
   backgroundColor: '#0f172a',
   scene: [BootScene, MapScene, BattleScene],
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
 };
 
 const game = new Phaser.Game(config);

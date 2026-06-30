@@ -1,0 +1,33 @@
+export const STAGES_COUNT = 11;
+
+export const ROOM_TYPES = {
+  START: 'Start',
+  BATTLE_NORMAL: 'Battle[Normal]',
+  BATTLE_ELITE: 'Battle[Elite]',
+  TREASURE: 'Treasure',
+  SHOP: 'Shop',
+  REST: 'Rest',
+  EVENT: 'Event',
+  PARTNER: 'Partner',
+  BOSS: 'Boss',
+};
+
+export const ROOM_POOL = [
+  ROOM_TYPES.BATTLE_NORMAL,
+  ROOM_TYPES.BATTLE_NORMAL,
+  ROOM_TYPES.BATTLE_ELITE,
+  ROOM_TYPES.TREASURE,
+  ROOM_TYPES.SHOP,
+  ROOM_TYPES.REST,
+  ROOM_TYPES.EVENT,
+  ROOM_TYPES.PARTNER,
+];
+
+export const GAME = {
+  width: 820,
+  height: 900,
+  roomRadius: 54,
+  iconSize: 60,
+  stageSpacingY: 180,
+  headerHeight: 50,
+};
