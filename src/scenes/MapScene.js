@@ -169,9 +169,9 @@ export class MapScene extends Phaser.Scene {
           const visited = this.state.map.visitedRooms.includes(room.id)
             && this.state.map.visitedRooms.includes(targetId);
           if (visited) {
-            this.connectionGraphics.lineStyle(6, 0xfbbf24, 0.6);
+            this.connectionGraphics.lineStyle(10, 0x94a3b8, 0.6);
           } else {
-            this.connectionGraphics.lineStyle(5, 0xffffff, 0.2);
+            this.connectionGraphics.lineStyle(10, 0xffffff, 0.2);
           }
           this.connectionGraphics.lineBetween(p1.x, p1.y, p2.x, p2.y);
         }
@@ -221,19 +221,23 @@ export class MapScene extends Phaser.Scene {
       this.roomTweens.set(id, t);
     } else if (reachable.has(id)) {
       circle.setFillStyle(0x38bdf8);
-      circle.setStrokeStyle(3, 0xffffff, 0.8);
+      circle.setStrokeStyle(3, 0x000000, 0.8);
       circle.setAlpha(1);
       const t = this.tweens.add({
         targets: circle, alpha: 0.6,
         yoyo: true, repeat: -1, duration: 1000,
       });
       this.roomTweens.set(id, t);
+    } else if (entry.roomData.stage > this.state.map.currentStageIdx) {
+      circle.setFillStyle(0xfcd34d);
+      circle.setStrokeStyle(3, 0xfbbf24, 0.8);
+      circle.setAlpha(1);
     } else if (visitedRooms.includes(id)) {
-      circle.setFillStyle(0x64748b);
+      circle.setFillStyle(0x94a3b8);
       circle.setStrokeStyle(3, 0xffffff, 0.2);
       circle.setAlpha(1);
     } else {
-      circle.setFillStyle(0x94a3b8);
+      circle.setFillStyle(0x64748b);
       circle.setStrokeStyle(3, 0xffffff, 0.2);
       circle.setAlpha(1);
     }
@@ -429,6 +433,7 @@ export class MapScene extends Phaser.Scene {
       advanceFloor();
       this.rebuildFloor();
     } else {
+      this.renderConnections();
       this.updateRoomVisuals();
       this.scrollToCurrent(true);
       this.updateHeader();
