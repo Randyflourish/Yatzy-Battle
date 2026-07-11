@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { generate as generateMap } from '../systems/MapGenerator.js';
-import { getState, advanceFloor } from '../systems/GameState.js';
+import { getState } from '../systems/GameState.js';
 import { STAGES_COUNT, GAME, ROOM_TYPES } from '../systems/config.js';
 
 const TEXTURE_KEY = {
@@ -429,18 +429,19 @@ export class MapScene extends Phaser.Scene {
   }
 
   handleRoomEvent(room) {
-    if (room.type === ROOM_TYPES.BOSS) {
-      advanceFloor();
-      this.rebuildFloor();
-    } else {
-      this.renderConnections();
-      this.updateRoomVisuals();
-      this.scrollToCurrent(true);
-      this.updateHeader();
+    const isBattle = room.type === ROOM_TYPES.BATTLE_NORMAL
+      || room.type === ROOM_TYPES.BATTLE_ELITE
+      || room.type === ROOM_TYPES.BOSS;
+
+    if (isBattle) {
+      this.scene.start('BattleScene', { roomType: room.type });
+      return;
     }
+
+    this.renderConnections();
+    this.updateRoomVisuals();
+    this.scrollToCurrent(true);
+    this.updateHeader();
   }
 
-  rebuildFloor() {
-    this.scene.restart();
-  }
 }
